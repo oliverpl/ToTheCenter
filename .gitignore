@@ -2,6 +2,7 @@
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
+/[Bb]uild_[Oo]utput/
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 
@@ -9,8 +10,8 @@
 ExportedObj/
 *.csproj
 *.unityproj
-*.sln
 *.suo
+*.sln
 *.tmp
 *.user
 *.userprefs
