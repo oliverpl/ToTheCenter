@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    //private CircleCollider2D playerCollisionBox;
+    private CircleCollider2D playerCollisionBox;
     private object arcCollisionBox;
+    private float maxCollisionDrawOffset;
     public float speed = 0.05F;
     public Dictionary<string, KeyCode> movementMap;
 
     public void Awake()
     {
-        //playerCollisionBox = GetComponent<CircleCollider2D>();
+        playerCollisionBox = GetComponent<CircleCollider2D>();
+        maxCollisionDrawOffset = playerCollisionBox.radius - 0.35f;
         arcCollisionBox = GetComponent<arcBehavior>();
         movementMap = new Dictionary<string, KeyCode>
         {
@@ -23,20 +25,21 @@ public class PlayerMovement : MonoBehaviour {
 
     public void Update()
     {
-        var playerCollisionBox = GetComponent<CircleCollider2D>();
         var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var direction = (mousePosition - playerCollisionBox.offset.normalized).normalized;
-        //var hit = Physics2D.Linecast(playerCollisionBox.offset.normalized, mousePosition, LayerMask.GetMask("Arc"));
-        var hit = Physics2D.CircleCast(playerCollisionBox.offset, playerCollisionBox.radius-0.5f, direction, Vector2.Distance(mousePosition, playerCollisionBox.offset),LayerMask.GetMask("Arc"));
+        var direction = (mousePosition - (Vector2)transform.position).normalized;
+        var hit = Physics2D.CircleCast(transform.position, playerCollisionBox.radius-0.5f, direction, Vector2.Distance(mousePosition, transform.position), LayerMask.GetMask("Arc"));
+        //Debug.Log("Start point: " + transform.position);
         if (hit.collider != null)
         {
-            Debug.Log("Hit point: " + hit.point);
+            //Debug.Log("Hit point: " + hit.point);
             //playerCollisionBox.transform.Translate(hit.point);
-            playerCollisionBox.transform.position = new Vector2(hit.point.x+playerCollisionBox.radius-0.35f, hit.point.y);
+            var drawOffset = new Vector2(direction.x * maxCollisionDrawOffset, direction.y * maxCollisionDrawOffset);
+            Debug.Log("Draw Offset: " + drawOffset);
+            transform.position = hit.point + drawOffset;
         }
         else
         {
-            Debug.Log("Miss point: " + mousePosition);
+            //Debug.Log("Miss point: " + mousePosition);
             //playerCollisionBox.transform.Translate(mousePosition);
             playerCollisionBox.transform.position = mousePosition;
         }
