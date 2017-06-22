@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         playerCollisionBox = GetComponent<CircleCollider2D>();
         maxCollisionDrawOffset = playerCollisionBox.radius - 0.35f;
-        arcCollisionBox = GetComponent<arcBehavior>();
+        arcCollisionBox = FindObjectOfType<arcBehavior>();
         movementMap = new Dictionary<string, KeyCode>
         {
             {"up", KeyCode.W },
@@ -33,6 +33,11 @@ public class PlayerMovement : MonoBehaviour {
         {
             //Debug.Log("Hit point: " + hit.point);
             //playerCollisionBox.transform.Translate(hit.point);
+            var lineHit = Physics2D.Linecast(hit.collider.transform.position, mousePosition);
+            if (lineHit.collider == null)
+            {
+
+            }
             var drawOffset = new Vector2(direction.x * maxCollisionDrawOffset, direction.y * maxCollisionDrawOffset);
             Debug.Log("Draw Offset: " + drawOffset);
             transform.position = hit.point + drawOffset;
