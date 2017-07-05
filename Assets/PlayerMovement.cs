@@ -14,52 +14,25 @@ public class PlayerMovement : MonoBehaviour {
         playerCollisionBox = GetComponent<CircleCollider2D>();
         maxCollisionDrawOffset = playerCollisionBox.radius - 0.35f;
         arcCollisionBox = FindObjectOfType<arcBehavior>();
-        movementMap = new Dictionary<string, KeyCode>
-        {
-            {"up", KeyCode.W },
-            {"down", KeyCode.D },
-            {"left", KeyCode.L },
-            {"right", KeyCode.R }
-        };
     }
 
     public void Update()
     {
+        var playerPosition = transform.position;
         var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var direction = (mousePosition - (Vector2)transform.position).normalized;
-        var hit = Physics2D.CircleCast(transform.position, playerCollisionBox.radius-0.5f, direction, Vector2.Distance(mousePosition, transform.position), LayerMask.GetMask("Arc"));
-        //Debug.Log("Start point: " + transform.position);
+        var direction = (mousePosition - (Vector2)playerPosition).normalized;
+        var hit = Physics2D.Raycast(playerPosition, direction, Vector2.Distance(mousePosition, playerPosition) + (playerCollisionBox.radius - 0.45f), LayerMask.GetMask("Arc"));
         if (hit.collider != null)
         {
-            //Debug.Log("Hit point: " + hit.point);
-            //playerCollisionBox.transform.Translate(hit.point);
-            var lineHit = Physics2D.Linecast(hit.collider.transform.position, mousePosition);
-            if (lineHit.collider == null)
-            {
-
-            }
-            var drawOffset = new Vector2(direction.x * maxCollisionDrawOffset, direction.y * maxCollisionDrawOffset);
-            Debug.Log("Draw Offset: " + drawOffset);
+            Debug.Log("Hit point: " + hit.point);
+            var drawOffset = new Vector2(direction.x * maxCollisionDrawOffset * -1, direction.y * maxCollisionDrawOffset * -1);
+            //Debug.Log("Draw Offset: " + drawOffset);
             transform.position = hit.point + drawOffset;
         }
         else
         {
             //Debug.Log("Miss point: " + mousePosition);
-            //playerCollisionBox.transform.Translate(mousePosition);
             playerCollisionBox.transform.position = mousePosition;
         }
-    }
-
-    private string MovementDirection()
-    {
-        foreach (var key in movementMap.Keys)
-        {
-            if (Input.GetKeyDown(movementMap[key]))
-            {
-                return key;
-            }
-        }
-
-        return string.Empty;
     }
 }
