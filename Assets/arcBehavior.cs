@@ -1,19 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class arcBehavior : MonoBehaviour
+public class ArcBehavior : MonoBehaviour, IObserverable
 {
-    public PolygonCollider2D ArcCollision { get; set; }
     private const float defaultRotationSpeed = 0.3f;
+
+    public Observer Observer { get; set; }
 
     private void Awake()
     {
-        ArcCollision = GetComponent<PolygonCollider2D>();
+        Observer = GameObject.FindWithTag("Observer").GetComponent<Observer>();
     }
 
     // Update is called once per frame
     void Update () {
-        transform.Rotate(0f, 0f, defaultRotationSpeed);
+        if (!Observer.GameOver)
+        {
+            transform.Rotate(0f, 0f, defaultRotationSpeed);
+        }
 	}
 }
